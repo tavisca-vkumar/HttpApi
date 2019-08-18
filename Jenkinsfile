@@ -14,8 +14,8 @@ pipeline
 		{
             	steps 
 		{
-                	
-                	sh 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
+                	powershell 'dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json'
+                	powershell 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
             	}
         	}
         stage('Test') 
