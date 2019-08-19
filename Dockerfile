@@ -1,9 +1,3 @@
-FROM mcr.microsoft.com/dotnet/core/sdk
-
-COPY HttpApi/bin/Debug/netcoreapp2.1/publish .
-
-WORKDIR .
-
-EXPOSE 8080
-
-ENTRYPOINT ["dotnet", "HttpApi.dll"]
+FROM mcr.microsoft.com/dotnet/core/aspnet
+ENV NAME ${PROJECT_NAME}
+CMD ["dotnet", "${SOLUTION_DLL_FILE}"]
