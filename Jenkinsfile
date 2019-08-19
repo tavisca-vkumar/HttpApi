@@ -1,93 +1,65 @@
-pipeline{
-    agent any
+pipeline {
+     agent any
+     
     parameters{
-        string(
-            name: "GIT_PATH",
-            defaultValue: "https://github.com/tavisca-vkumar/HttpApi.git",
-            description: "git repo ki path hai ye"
-        )
-        string(
-            name: "SOLUTION_PATH",
-            defaultValue: "HttpApi.sln",
-            description: "solution path hai ye"
-        )
-        string(
-            name: "TEST_PATH",
-            defaultValue: "HttpApi.Tests/HttpApi.Tests.csproj",
-            description: "test solution path hai ye"
-        )
+     string(name:'APPLICATION_PATH',defaultValue:'HttpApi.sln')
+ 
+     string(name: 'NUGET_REPO', defaultValue: 'https://api.nuget.org/v3/index.json')
+     string(name: 'GIT_REPO_PATH', defaultValue: 'https://github.com/tavisca-vkumar/HttpApi.git')
+     string(name:'IMAGE_NAME',defaultValue:'vikeshsample-image',description: 'Enter the image name')
+      string(name: 'DOCKER_LOGIN',defaultValue:'vikesh5329', description: 'Enter Login')
+       password(name: 'DOCKER_PASSWORD', defaultValue:'Vikesh@123', description: 'Enter Password')
+       string(name: 'TAG_NAME', defaultValue: 'version', description: 'enter tag name')
+         string(name:"DOCKER_REPO_NAME",defaultValue:"HttpApi")
+         string(name: 'DOCKER_CONTAINER_NAME',defaultValue: 'simpleApi')
+              
+	string(name: 'SOLUTION_DLL_FILE',defaultValue: '.\HttpApi\HttpApi\bin\Debug\netcoreapp2.1\HttpApi.dll')
+
+   
+     choice(name: 'JOB', choices:  ['Build', 'Deploy'])
+    }
+    
+    
+   
+       stages
+       {
         
-        string(
-            name: "PROJECT_PATH",
-            defaultValue: "HttpApi/HttpApi.csproj",
-        )
-         string(
-            name: "DOCKERFILE",
-            defaultValue: "mcr.microsoft.com/dotnet/core/aspnet",
-        )
-         string(
-            name: "ENV_NAME",
-            defaultValue: "Api",
-        )
-         string(
-            name: "SOLUTION_DLL_FILE",
-            defaultValue: "HttpApi.dll",
-        )
-        string(
-            name: "DOCKER_USERNAME",
-            description: "Dockerhub USer name"
-        )
-        string(
-            name: "DOCKER_PASSWORD",
-            description:  "Docker hub Password"
-        )
-        choice(
-            name: "OPTION",
-            choices: ["Build", "Deploy"],
-            description: "Choice"
-        )
-    }
-    stages
-    {
-        stage('Build')
-        {
-            when{expression{params.OPTION == "Build"}}
-            steps
-            {
-                sh '''
-                    dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json
-                    dotnet build ${PPOJECT_PATH}
-                    dotnet test ${TEST_PATH}
-                    dotnet publish ${PROJECT_PATH}
-                '''
-                bat 'zip zipFile: 'publish.zip', archive: false, dir: './publish'
-                archiveArtifacts artifacts: 'publish.zip', fingerprint: true'
-            }
-        }
-        stage('Deploy')
-        {
-        when{expression{params.OPTION == "Deploy"}}
-            steps
-            {
-             //   writeFile file: './publish/Dockerfile', 
-             //   text: '''
-              //          FROM mcr.microsoft.com/dotnet/core/aspnet\n
-               //         ENV NAME ${PROJECT_NAME}\n
-                //        CMD ["dotnet", "${SOLUTION_DLL_FILE}"]\n
-                 //   '''
+          stage('Build') 
+          {
+            
+               steps 
+	       {
+              
+		 when{expression{params.JOB == "Build"}}
+                 powershell(script: 'dotnet build ${env:APPLICATION_PATH} -p:Configuration=release -v:n')
+                 powershell(script: 'dotnet test')
+                 powershell(script: 'dotnet publish') 
+               }
+          }
                 
-                sh "docker build ./publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
-                sh "docker tag ${PROJECT_NAME}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
-                sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                sh "docker push ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
+         stage('Docker Creation')
+        {
+		
+	 when{expression{params.JOB == "Deploy"}}
+             steps
+	     {
+                    	powershell(script:'docker build -t ${env:IMAGE_NAME} .')
+           		powershell(script:'docker login -u ${env:DOCKER_LOGIN} -p ${env:DOCKER_PASSWORD}')
+           		powershell(script:'docker tag ${env:IMAGE_NAME}:latest ${env:DOCKER_LOGIN}/${env:DOCKER_REPO_NAME}:${env:TAG_NAME}')
+             }           
+          }
+        stage(' Docker Image Pushing')
+        {
+		when{expression{params.JOB == "Deploy"}}
+            steps 
+            {
+              
+                powershell(script:'docker push ${env:DOCKER_LOGIN}/${env:DOCKER_REPO_NAME}:${env:TAG_NAME}')
             }
         }
+         
+            
+           
     }
-    post
-    {
-        always
-        {
-            deleteDir()
-        }
-    }
+    
 }
