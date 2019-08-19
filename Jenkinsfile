@@ -60,7 +60,7 @@ pipeline{
                     dotnet test ${TEST_PATH}
                     dotnet publish ${PROJECT_PATH}
                 '''
-                bat 'zip zipFile: 'publish.zip', archive: false, dir: 'HttpApi.Core/bin/Debug/netcoreapp2.1/publish'
+                bat 'zip zipFile: 'publish.zip', archive: false, dir: 'HttpApi/bin/Debug/netcoreapp2.1/publish'
                 archiveArtifacts artifacts: 'publish.zip', fingerprint: true'
             }
         }
@@ -76,7 +76,7 @@ pipeline{
                         CMD ["dotnet", "${SOLUTION_DLL_FILE}"]\n
                     '''
                 
-                sh "docker build HttpApi.Core/bin/Debug/netcoreapp2.1/publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
+                sh "docker build HttpApi/bin/Debug/netcoreapp2.1/publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
                 sh "docker tag ${PROJECT_NAME}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
                 sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
                 sh "docker push ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
