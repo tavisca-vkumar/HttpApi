@@ -60,7 +60,7 @@ pipeline{
                     dotnet test ${TEST_PATH}
                     dotnet publish ${PROJECT_PATH}
                 '''
-                bat 'zip zipFile: 'publish.zip', archive: false, dir: './HttpApi/publish'
+                bat 'zip zipFile: 'publish.zip', archive: false, dir: './publish'
                 archiveArtifacts artifacts: 'publish.zip', fingerprint: true'
             }
         }
