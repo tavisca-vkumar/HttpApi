@@ -31,7 +31,7 @@ pipeline{
         )
          string(
             name: "SOLUTION_DLL_FILE",
-            defaultValue: "HttpApi.Core.dll",
+            defaultValue: "HttpApi.dll",
         )
         string(
             name: "DOCKER_USERNAME",
