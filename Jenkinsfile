@@ -36,6 +36,15 @@ pipeline {
                  powershell(script: 'dotnet publish') 
                }
           }
+
+	stage('Sonarqube static code analysis') 
+          {
+            
+               steps 
+	       {
+              	 powershell(script: 'sonar-scanner.bat -D"sonar.projectKey=tavisca-kumar HttpApi" -D"sonar.organization=tavisca-vkumar" -D"sonar.sources=." -D"sonar.host.url=https://sonarcloud.io" -D"sonar.login=a2de5ee0e735ef07b60a8c8e64d481c17d6051a4"')
+               }
+          }
                 
      stage('Docker Creation')
         {

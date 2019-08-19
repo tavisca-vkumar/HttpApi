@@ -1,0 +1,7 @@
+organization=tavisca-vkumar
+projectKey=tavisca-vkumar_HttpApi
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.184
+dashboardUrl=https://sonarcloud.io/dashboard?id=tavisca-vkumar_HttpApi
+ceTaskId=AWyqlyJupsVEYWWn4RSv
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWyqlyJupsVEYWWn4RSv
