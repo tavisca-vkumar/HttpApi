@@ -60,7 +60,7 @@ pipeline{
                     dotnet test ${TEST_PATH}
                     dotnet publish ${PROJECT_PATH}
                 '''
-                zip zipFile: 'publish.zip', archive: false, dir: 'WebAPI.Core/bin/Debug/netcoreapp2.2/publish'
+                zip zipFile: 'publish.zip', archive: false, dir: 'HttpApi.Core/bin/Debug/netcoreapp2.2/publish'
                 archiveArtifacts artifacts: 'publish.zip', fingerprint: true
             }
         }
