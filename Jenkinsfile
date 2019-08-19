@@ -37,36 +37,22 @@ pipeline {
                }
           }
                 
-         stage('Docker Creation')
+     stage('Docker Creation')
         {
-		
-	 when{expression{params.JOB == "Deploy"}}
-             steps
-	     {
-                    	powershell(script:'docker build -t ${env:IMAGE_NAME} .')
-           		powershell(script:'docker login -u ${env:DOCKER_LOGIN} -p ${env:DOCKER_PASSWORD}')
-           		powershell(script:'docker tag ${env:IMAGE_NAME}:latest ${env:DOCKER_LOGIN}/${env:DOCKER_REPO_NAME}:${env:TAG_NAME}')
+             steps{
+           powershell(script:'docker build -t ${env:IMAGE_NAME} .')
+           powershell(script:'docker login -u ${env:DOCKER_LOGIN} -p ${env:DOCKER_PASSWORD}')
+           powershell(script:'docker tag ${env:IMAGE_NAME}:latest ${env:DOCKER_LOGIN}/${env:DOCKER_REPO_NAME}:${env:TAG_NAME}')
              }           
-          }
+             }
         stage(' Docker Image Pushing')
         {
-		when{expression{params.JOB == "Deploy"}}
             steps 
             {
-<<<<<<< HEAD
               
                 powershell(script:'docker push ${env:DOCKER_LOGIN}/${env:DOCKER_REPO_NAME}:${env:TAG_NAME}')
-=======
-             
-                
-                sh "docker build ./publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
-                sh "docker tag ${PROJECT_NAME}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
-                sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                sh "docker push ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
->>>>>>> 21b9fea1cc13519629388ed08650b6bcb493433a
             }
         }
-         
             
            
     }
