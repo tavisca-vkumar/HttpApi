@@ -13,7 +13,7 @@ pipeline {
          string(name:"DOCKER_REPO_NAME",defaultValue:"HttpApi")
          string(name: 'DOCKER_CONTAINER_NAME',defaultValue: 'simpleApi')
               
-	string(name: 'SOLUTION_DLL_FILE',defaultValue: '.\HttpApi\HttpApi\bin\Debug\netcoreapp2.1\HttpApi.dll')
+	string(name: 'SOLUTION_DLL_FILE',defaultValue: './HttpApi/HttpApi/bin/Debug/netcoreapp2.1/HttpApi.dll')
 
    
      choice(name: 'JOB', choices:  ['Build', 'Deploy'])
@@ -53,8 +53,17 @@ pipeline {
 		when{expression{params.JOB == "Deploy"}}
             steps 
             {
+<<<<<<< HEAD
               
                 powershell(script:'docker push ${env:DOCKER_LOGIN}/${env:DOCKER_REPO_NAME}:${env:TAG_NAME}')
+=======
+             
+                
+                sh "docker build ./publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
+                sh "docker tag ${PROJECT_NAME}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
+                sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                sh "docker push ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
+>>>>>>> 21b9fea1cc13519629388ed08650b6bcb493433a
             }
         }
          
