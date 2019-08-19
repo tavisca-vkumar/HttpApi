@@ -69,14 +69,14 @@ pipeline{
         when{expression{params.OPTION == "Deploy"}}
             steps
             {
-                writeFile file: './HttpApi/publish/Dockerfile', 
+                writeFile file: './publish/Dockerfile', 
                 text: '''
                         FROM mcr.microsoft.com/dotnet/core/aspnet\n
                         ENV NAME ${PROJECT_NAME}\n
                         CMD ["dotnet", "${SOLUTION_DLL_FILE}"]\n
                     '''
                 
-                sh "docker build ./HttpApi/publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
+                sh "docker build ./publish/ --tag=${PROJECT_NAME}:${BUILD_NUMBER}"    
                 sh "docker tag ${PROJECT_NAME}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
                 sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
                 sh "docker push ${DOCKER_USERNAME}/${PROJECT_NAME}:${BUILD_NUMBER}"
