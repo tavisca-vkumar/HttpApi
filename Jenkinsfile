@@ -69,7 +69,7 @@ pipeline{
         when{expression{params.OPTION == "Deploy"}}
             steps
             {
-                writeFile file: 'HttpApi/bin/Debug/netcoreapp2.2/publish/Dockerfile', 
+                writeFile file: 'HttpApi/bin/Debug/netcoreapp2.1/publish/Dockerfile', 
                 text: '''
                         FROM mcr.microsoft.com/dotnet/core/aspnet\n
                         ENV NAME ${PROJECT_NAME}\n
